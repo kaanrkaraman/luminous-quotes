@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "description": "Create beautiful quote images with stunning backgrounds and premium typography",
-  "author": "Kaan",
-  "license": "MIT",
+  "author": {
+    "name": "R. Kaan Karaman",
+    "email": "kaanrkaraman@gmail.com",
+    "url": "https://kaans.land"
+  },
   "type": "module",
   "scripts": {
     "dev": "bun run --filter '*' dev:*",
