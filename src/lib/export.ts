@@ -1,4 +1,4 @@
-import { toPng } from "html-to-image"
+import { toPng } from "html-to-image";
 
 export async function downloadQuoteAsImage(element: HTMLElement, filename = "quote") {
   try {
@@ -6,14 +6,14 @@ export async function downloadQuoteAsImage(element: HTMLElement, filename = "quo
       quality: 1,
       pixelRatio: 2,
       cacheBust: true,
-    })
+    });
 
-    const link = document.createElement("a")
-    link.download = `${filename}.png`
-    link.href = dataUrl
-    link.click()
+    const link = document.createElement("a");
+    link.download = `${filename}.png`;
+    link.href = dataUrl;
+    link.click();
   } catch (error) {
-    console.error("Failed to export image:", error)
-    throw error
+    console.error("Failed to export image:", error);
+    throw error;
   }
 }

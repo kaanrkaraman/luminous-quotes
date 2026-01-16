@@ -1,16 +1,16 @@
-import { Image, Trash2, Type, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import type { SavedQuote } from "@/db/schema"
-import { FONTS } from "@/hooks/useQuote"
+import { Image, Trash2, Type, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { SavedQuote } from "@/db/schema";
+import { FONTS } from "@/hooks/useQuote";
 
 interface SavedQuotesGalleryProps {
-  savedQuotes: SavedQuote[]
-  isOpen: boolean
-  onClose: () => void
-  onSelect: (quote: SavedQuote) => void
-  onDelete: (id: number) => void
-  onUpdateBackground: (id: number) => void
-  onUpdateFont: (id: number, fontFamily: string) => void
+  savedQuotes: SavedQuote[];
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (quote: SavedQuote) => void;
+  onDelete: (id: number) => void;
+  onUpdateBackground: (id: number) => void;
+  onUpdateFont: (id: number, fontFamily: string) => void;
 }
 
 export function SavedQuotesGallery({
@@ -22,41 +22,41 @@ export function SavedQuotesGallery({
   onUpdateBackground,
   onUpdateFont,
 }: SavedQuotesGalleryProps) {
-  const [isClosing, setIsClosing] = useState(false)
-  const [shouldRender, setShouldRender] = useState(false)
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setShouldRender(true)
-      setIsClosing(false)
+      setShouldRender(true);
+      setIsClosing(false);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   const handleClose = () => {
-    setIsClosing(true)
+    setIsClosing(true);
     setTimeout(() => {
-      setShouldRender(false)
-      onClose()
-    }, 200)
-  }
+      setShouldRender(false);
+      onClose();
+    }, 200);
+  };
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
     const triggerClose = () => {
-      setIsClosing(true)
+      setIsClosing(true);
       setTimeout(() => {
-        setShouldRender(false)
-        onClose()
-      }, 200)
-    }
+        setShouldRender(false);
+        onClose();
+      }, 200);
+    };
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") triggerClose()
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [isOpen, onClose])
+      if (e.key === "Escape") triggerClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
-  if (!shouldRender) return null
+  if (!shouldRender) return null;
 
   return (
     <div
@@ -94,10 +94,10 @@ export function SavedQuotesGallery({
           className="p-2 rounded-xl transition-colors duration-150"
           style={{ color: "rgba(255,255,255,0.6)" }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = "rgba(255,255,255,0.08)"
+            e.currentTarget.style.background = "rgba(255,255,255,0.08)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent"
+            e.currentTarget.style.background = "transparent";
           }}
         >
           <X className="w-6 h-6" />
@@ -136,8 +136,8 @@ export function SavedQuotesGallery({
                   className="w-full aspect-4/3 bg-cover bg-center text-left"
                   style={{ backgroundImage: `url(${quote.backgroundUrl})` }}
                   onClick={() => {
-                    onSelect(quote)
-                    handleClose()
+                    onSelect(quote);
+                    handleClose();
                   }}
                 >
                   <div
@@ -173,8 +173,8 @@ export function SavedQuotesGallery({
                     {
                       icon: Type,
                       action: () => {
-                        const idx = FONTS.findIndex((f) => f.value === quote.fontFamily)
-                        onUpdateFont(quote.id, FONTS[(idx + 1) % FONTS.length].value)
+                        const idx = FONTS.findIndex((f) => f.value === quote.fontFamily);
+                        onUpdateFont(quote.id, FONTS[(idx + 1) % FONTS.length].value);
                       },
                       title: "Change font",
                     },
@@ -189,8 +189,8 @@ export function SavedQuotesGallery({
                       key={title}
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        action()
+                        e.stopPropagation();
+                        action();
                       }}
                       className="p-2 rounded-lg transition-all duration-150"
                       style={{
@@ -200,10 +200,10 @@ export function SavedQuotesGallery({
                       onMouseEnter={(e) => {
                         e.currentTarget.style.background = danger
                           ? "rgba(239,68,68,0.8)"
-                          : "rgba(255,255,255,0.15)"
+                          : "rgba(255,255,255,0.15)";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "rgba(0,0,0,0.6)"
+                        e.currentTarget.style.background = "rgba(0,0,0,0.6)";
                       }}
                       title={title}
                     >
@@ -221,5 +221,5 @@ export function SavedQuotesGallery({
         Press ESC to close
       </div>
     </div>
-  )
+  );
 }

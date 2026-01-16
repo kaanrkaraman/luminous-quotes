@@ -1,50 +1,60 @@
-import { Check, Search, X } from "lucide-react"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { FONTS, type FontOption } from "@/hooks/useQuote"
+import { Check, ChevronDown, ChevronUp, Search, Type, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FONTS, type FontOption, type TypographySettings } from "@/hooks/useQuote";
 
 interface FontSelectorProps {
-  currentFont: FontOption
-  onSelect: (font: FontOption) => void
-  onPreview: (font: FontOption) => void
-  onClose: () => void
+  currentFont: FontOption;
+  typography: TypographySettings;
+  onSelect: (font: FontOption) => void;
+  onPreview: (font: FontOption) => void;
+  onChangeTypography: (settings: Partial<TypographySettings>) => void;
+  onClose: () => void;
 }
 
-const CATEGORIES = ["All", "Sans", "Serif", "Display"] as const
-type Category = (typeof CATEGORIES)[number]
+const CATEGORIES = ["All", "Sans", "Serif", "Display"] as const;
+type Category = (typeof CATEGORIES)[number];
 
-export function FontSelector({ currentFont, onSelect, onPreview, onClose }: FontSelectorProps) {
-  const [search, setSearch] = useState("")
-  const [category, setCategory] = useState<Category>("All")
+export function FontSelector({
+  currentFont,
+  typography,
+  onSelect,
+  onPreview,
+  onChangeTypography,
+  onClose,
+}: FontSelectorProps) {
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState<Category>("All");
+  const [showTypography, setShowTypography] = useState(false);
 
-  const [activeSelection, setActiveSelection] = useState(currentFont.name)
-  const initialFontRef = useRef(currentFont)
-  const wasSelectedRef = useRef(false)
+  const [activeSelection, setActiveSelection] = useState(currentFont.name);
+  const initialFontRef = useRef(currentFont);
+  const wasSelectedRef = useRef(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [onClose])
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   useEffect(() => {
-    const original = initialFontRef.current
+    const original = initialFontRef.current;
     return () => {
       if (!wasSelectedRef.current) {
-        onPreview(original)
+        onPreview(original);
       }
-    }
-  }, [onPreview])
+    };
+  }, [onPreview]);
 
   const filteredFonts = useMemo(() => {
     return FONTS.filter((font) => {
-      const matchesSearch = font.name.toLowerCase().includes(search.toLowerCase())
+      const matchesSearch = font.name.toLowerCase().includes(search.toLowerCase());
       const matchesCategory =
-        category === "All" || font.category.toLowerCase() === category.toLowerCase()
-      return matchesSearch && matchesCategory
-    })
-  }, [search, category])
+        category === "All" || font.category.toLowerCase() === category.toLowerCase();
+      return matchesSearch && matchesCategory;
+    });
+  }, [search, category]);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center p-4 sm:p-8">
@@ -92,6 +102,81 @@ export function FontSelector({ currentFont, onSelect, onPreview, onClose }: Font
           </div>
         </div>
 
+        <div className="border-b border-white/10 bg-white/5">
+          <button
+            type="button"
+            onClick={() => setShowTypography(!showTypography)}
+            className="w-full flex items-center justify-between px-6 py-3 text-sm font-medium text-zinc-300 hover:text-white transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Type className="w-4 h-4" />
+              <span>Typography Settings</span>
+            </div>
+            {showTypography ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
+          </button>
+
+          <div
+            className={`grid transition-[grid-template-rows] duration-300 ease-out border-b border-white/10 ${
+              showTypography ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            }`}
+          >
+            <div className="overflow-hidden bg-black/20">
+              <div className="px-6 py-4 grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-zinc-400">
+                    <span>Size</span>
+                    <span>{typography.fontSize}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="50"
+                    max="200"
+                    value={typography.fontSize}
+                    onChange={(e) => onChangeTypography({ fontSize: Number(e.target.value) })}
+                    className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-zinc-400">
+                    <span>Line Height</span>
+                    <span>{typography.lineHeight}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.8"
+                    max="2.5"
+                    step="0.1"
+                    value={typography.lineHeight}
+                    onChange={(e) => onChangeTypography({ lineHeight: Number(e.target.value) })}
+                    className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-xs text-zinc-400">
+                    <span>Spacing</span>
+                    <span>{typography.letterSpacing}em</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="-0.1"
+                    max="0.5"
+                    step="0.01"
+                    value={typography.letterSpacing}
+                    onChange={(e) => onChangeTypography({ letterSpacing: Number(e.target.value) })}
+                    className="w-full h-1.5 bg-white/10 rounded-full appearance-none cursor-pointer accent-white"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 px-6 py-4 border-b border-white/10 overflow-x-auto">
           {CATEGORIES.map((cat) => (
             <button
@@ -115,20 +200,20 @@ export function FontSelector({ currentFont, onSelect, onPreview, onClose }: Font
         <div className="flex-1 overflow-y-auto p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredFonts.map((font) => {
-              const isActive = activeSelection === font.name
+              const isActive = activeSelection === font.name;
 
               return (
                 <button
                   type="button"
                   key={font.name}
                   onClick={() => {
-                    wasSelectedRef.current = true
-                    setActiveSelection(font.name)
-                    onSelect(font)
-                    onClose()
+                    wasSelectedRef.current = true;
+                    setActiveSelection(font.name);
+                    onSelect(font);
+                    onClose();
                   }}
                   onMouseEnter={() => {
-                    onPreview(font)
+                    onPreview(font);
                   }}
                   className={`group relative flex flex-col items-start p-5 rounded-2xl border transition-all duration-200 text-left ${
                     isActive
@@ -170,7 +255,7 @@ export function FontSelector({ currentFont, onSelect, onPreview, onClose }: Font
                     </p>
                   </div>
                 </button>
-              )
+              );
             })}
           </div>
 
@@ -182,5 +267,5 @@ export function FontSelector({ currentFont, onSelect, onPreview, onClose }: Font
         </div>
       </div>
     </div>
-  )
+  );
 }
